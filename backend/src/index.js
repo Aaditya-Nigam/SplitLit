@@ -24,12 +24,12 @@ app.use('/api/v/expense',expenseRouter)
 app.use('/api/v/transaction',transactionRouter)
 app.use('/api/v/group',groupRouter)
 
-// if(process.env.NODE_ENV==="production"){
-//     app.use(express.static(path.join(_dirname,"../frontend/dist")))
-//     app.get('*',(req,res)=>{
-//         res.sendFile(path.resolve(_dirname,"../frontend","dist","index.html"))
-//     })
-// }
+if(process.env.NODE_ENV==="production"){
+    app.use(express.static(path.join(_dirname,"../frontend/dist")))
+    app.get('*',(req,res)=>{
+        res.sendFile(path.resolve(_dirname,"../frontend","dist","index.html"))
+    })
+}
 
 app.listen(5000,()=>{
     console.log(`Listening at port no. ${5000}`)
