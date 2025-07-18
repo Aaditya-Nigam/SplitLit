@@ -38,8 +38,8 @@ export const Dashboard=()=>{
     const separateTransactio=()=>{
         let owe=0
         let owed=0;
-        transaction.map((t)=>{
-            if(t.member1==authUser.userName){
+        transaction?.map((t)=>{
+            if(t.member1==authUser?.userName){
                 owe=Number(owe)+t.amount;
             }else{
                 owed=Number(owed)+t.amount
@@ -115,9 +115,9 @@ export const Dashboard=()=>{
                                             </div>
                                             <div className="flex flex-col gap-4">
                                                 {
-                                                    transaction.map((ele,idx)=>{
+                                                    transaction?.map((ele,idx)=>{
                                                         {
-                                                            return ele.member1==authUser.userName && ele.amount>0? 
+                                                            return ele.member1==authUser?.userName && ele.amount>0? 
                                                             <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.groupId}`:`/person/${ele.member1}`} className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
                                                                 <div>
                                                                     <p>{ele.member2}</p>
@@ -139,9 +139,9 @@ export const Dashboard=()=>{
                                             </div>
                                             <div className="flex flex-col gap-2">
                                                 {
-                                                    transaction.map((ele,idx)=>{
+                                                    transaction?.map((ele,idx)=>{
                                                         {
-                                                            return ele.member2==authUser.userName && ele.amount>0? 
+                                                            return ele.member2==authUser?.userName && ele.amount>0? 
                                                             <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.member1}`:`/person/${ele.member1}`} className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
                                                                 <div>
                                                                     <p>{ele.member1}</p>
@@ -165,7 +165,7 @@ export const Dashboard=()=>{
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         {
-                                            groups.map((group,idx)=>{
+                                            groups?.map((group,idx)=>{
                                                 return (
                                                     <NavLink key={idx} to={`/group/${group._id}`} className="flex gap-3 items-center">
                                                         <RiGroupLine className="text-4xl bg-[#ffffff40] text-white p-1 rounded-lg"/>
