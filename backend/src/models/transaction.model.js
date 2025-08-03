@@ -2,11 +2,13 @@ const mongoose=require("mongoose")
 
 const transactionSchema=new mongoose.Schema({
     member1: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     member2: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     amount: {
@@ -20,10 +22,6 @@ const transactionSchema=new mongoose.Schema({
     groupId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',
-        default: null
-    },
-    groupName: {
-        type: String,
         default: null
     }
 })

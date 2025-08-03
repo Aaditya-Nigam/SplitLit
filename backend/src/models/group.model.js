@@ -7,10 +7,12 @@ const groupSchema=mongoose.Schema({
         required: true
     },
     members: [{
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     }],
-    groupName: {
-        type: String,
+    groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group',
         required: true
     },
     description: {

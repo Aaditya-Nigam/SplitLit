@@ -6,7 +6,8 @@ const expenseSchema=mongoose.Schema({
         default: false
     },
     paidBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     amount: {
@@ -14,7 +15,8 @@ const expenseSchema=mongoose.Schema({
         required: true
     },
     paidTo: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     groupId: {
