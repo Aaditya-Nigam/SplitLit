@@ -20,13 +20,9 @@ export const Dashboard=()=>{
 
     const {authUser}=useAuthStore()
     const {groups,getAllGroups}=useGroupStore();
-    const {transaction,getAllTransaction}=useExpenseStore();
+    const {transaction,getAllTransaction,getExpense,expense}=useExpenseStore();
     
-    useEffect(()=>{
-        getAllTransaction();
-        getAllGroups();      
-    },[])
-
+    
     const navigate=useNavigate()
     
     useEffect(()=>{
@@ -34,7 +30,13 @@ export const Dashboard=()=>{
             navigate("/signIn")
         }
     },[authUser])
-
+    
+    useEffect(()=>{
+        getAllTransaction();
+        getAllGroups();
+        getExpense({userName: authUser._id}) 
+    },[])
+    
     const separateTransactio=()=>{
         let owe=0
         let owed=0;
@@ -54,6 +56,8 @@ export const Dashboard=()=>{
             separateTransactio();
         }
     },[transaction])
+
+    console.log(expense)
 
     return (
         <>
