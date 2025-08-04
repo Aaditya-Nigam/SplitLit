@@ -171,7 +171,6 @@ const createGroupExpense=async (req,res)=>{
             title,
             amount: amount,
             paidBy,
-            paidTo: group.groupName,
             category,
             isGroupExpense: true,
             groupId,
@@ -192,7 +191,6 @@ const createGroupExpense=async (req,res)=>{
                     amount: share,
                     isGroupTransaction: true,
                     groupId: groupId,
-                    groupName: group.groupName
                 })
                 await newTransaction.save();
             }else{
@@ -212,7 +210,7 @@ const createGroupExpense=async (req,res)=>{
             
         })
         await Promise.all(tasks)
-        res.status(201).json({message: "Expense created!!"});
+        res.status(201).json(newExpense);
     } catch (error) {
         console.log("Error in createGroupExpense controller: ",error.message)
         res.status(401).json({message: "Internal server error!"});
@@ -221,16 +219,16 @@ const createGroupExpense=async (req,res)=>{
 
 const getExpense=async (req,res)=>{
     try {
-        const {userName}=req.body;
-        const auth=req.user.userName
-        if(!userName){
+        const {secondUser}=req.params;
+        const userId=req.user._id
+        if(!secondUser){
             res.status(401).json({message: "Fields are missing!"})
             return ;
         }
         
         const expense=await Expense.find({
-            $or: [{paidBy: userName, paidTo: auth, isGroupExpense: false},
-                {paidBy: auth, paidTo: userName, isGroupExpense: false}
+            $or: [{paidBy: userId, paidTo: secondUser, isGroupExpense: false},
+                {paidBy: secondUser, paidTo: userId, isGroupExpense: false}
             ]
         })
         res.status(201).json(expense);
@@ -244,13 +242,12 @@ const getExpense=async (req,res)=>{
 
 const getGroupExpense=async (req,res)=>{
     try {
-        const {groupId}=req.body;
-        const auth=req.user.userName
+        const {groupId}=req.params;
+        const userId=req.user._id
         if(!groupId){
             res.status(401).json({message: "Fields are missing!"})
             return ;
         }
-
         const group=await Group.findById(groupId)
         if(!group){
             res.status(401).json({message: "Invalid groupId!"});
@@ -294,7 +291,7 @@ const updateExpense=async (req,res)=>{
 const deleteExpense=async (req,res)=>{
     try {
         const {expenseId}=req.body;
-        const userName=req.user.userName;
+        const userId=req.user._id;
         if(!expenseId){
             res.status(401).json({message: "Fields are missing!"});
             return ;
@@ -304,8 +301,8 @@ const deleteExpense=async (req,res)=>{
             res.status(401).json({message: "No such expense exists!"})
             return ;
         }
-        if(expense.paidBy!=req.user.userName && expense.paidTo!=req.user.userName){
-            res.status(401).json({message: "User nauthorized!"});
+        if(expense.paidBy!=userId && expense.paidTo!=userId){
+            res.status(401).json({message: "User unauthorized!"});
             return ;
         }
         const amount=expense.amount;

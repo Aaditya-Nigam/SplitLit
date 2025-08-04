@@ -17,7 +17,7 @@ const expenseSchema=mongoose.Schema({
     paidTo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        default: null
     },
     groupId: {
         type: mongoose.Schema.Types.ObjectId,

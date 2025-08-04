@@ -5,8 +5,8 @@ const router=express.Router();
 
 router.get('/getAllTransaction', protectedRoute, getAllTransaction)
 
-router.post('/getTransaction', protectedRoute, getTransaction)
+router.get('/getTransaction/:secondUser', protectedRoute, getTransaction)
 
-router.post('/getGroupTransaction', protectedRoute, getGroupTransaction)
+router.get('/getGroupTransaction/:groupId', protectedRoute, getGroupTransaction)
 
 module.exports=router
