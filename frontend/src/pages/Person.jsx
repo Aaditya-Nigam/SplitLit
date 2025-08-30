@@ -15,12 +15,11 @@ export const Person=()=>{
     const [showSettle,setShowSettle]=useState(false)
 
     useEffect(()=>{
-        const formData={userName: id}
+        const formData={id}
         getUser(formData)
         getExpense(formData)
         getBalance(formData)
-        console.log("h");
-    },[showSettle])
+    },[id])
 
     if(!user && isSearchingUser){
         return <h1>Loading...</h1>
@@ -54,11 +53,11 @@ export const Person=()=>{
                         <h1 className="text-2xl font-bold">Balance</h1>
                         <div className="flex justify-between items-center">
                             {
-                                balance?.member1==authUser?.userName?
+                                balance?.member1==authUser?._id?
                                 <p>{user?.fullName} owes you</p>:
                                 <p>You owes {user?.fullName}</p>
                             }
-                            <p className={`text-2xl font-semibold ${balance?.member1==authUser?.userName?'text-green-500':'text-rose-500'}`}>₹ {balance?.amount}</p>
+                            <p className={`text-2xl font-semibold ${balance?.member1==authUser?._id?'text-green-500':'text-rose-500'}`}>₹ {balance?.amount}</p>
                         </div>
                     </div>
                     <div className="border border-[#ffffff50] p-4 rounded-xl">
@@ -75,9 +74,9 @@ export const Person=()=>{
                                             <div className="flex flex-col items-end">
                                                 <p className="text-lg font-semibold">₹ {exp?.amount}</p>
                                                 {
-                                                    exp.paidBy==authUser.userName?
+                                                    exp.paidBy._id==authUser._id?
                                                     <p className="text-green-500 text-sm">You paid</p>:
-                                                    <p className="text-rose-500 text-sm">{exp?.paidBy} paid</p>
+                                                    <p className="text-rose-500 text-sm">{exp?.paidBy.userName} paid</p>
                                                 }
                                             </div>
                                         </div>

@@ -53,7 +53,7 @@ const authSignIn=async (req,res)=>{
             res.status(401).json({message: "Fields are missing!!"});
             return ;
         }
-        const user=await User.findOne({email});
+        const user=await User.findOne({email}).populate({path: 'groups'})
         if(!user){
             res.status(401).json({message: "Invalid credentials!!"});
             return ;
@@ -105,14 +105,12 @@ const addParticipant=async (req,res)=>{
             res.status(401).json({message: "Fields are missing!"});
             return ;
         }
-        const user=await User.findOne({userName})
+        const user=await User.findOne({userName}).select("-password")
         if(!user){
             res.status(402).json({message: "Invalid username!"})
             return ;
         }
-        res.status(201).json({
-           name:user.userName
-        })
+        res.status(201).json(user)
     } catch (error) {
         console.log("Error in addParticipant controller: ",error.message)
         res.status(401).json({message: "Internal server error!"})
@@ -121,12 +119,12 @@ const addParticipant=async (req,res)=>{
 
 const getUser=async (req,res)=>{
     try {
-        const {userName}= req.body;
-        if(!userName){
+        const {id}= req.params;
+        if(!id){
             res.status(401).json({message: "Fields are missing!"})
             return ;
         }
-        const user=await User.findOne({userName}).select("-password");
+        const user=await User.findOne({_id: id}).select("-password");
         if(!user){
             res.status(401).json({message: "Invalid userName!"});
             return ;

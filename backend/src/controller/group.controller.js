@@ -46,9 +46,10 @@ const createGroup=async (req,res)=>{
             members
         })
         await newGroup.save();
-        members.map(async (ele)=>{
-            await User.updateOne({userId: ele}, {$push: {groups: newGroup._id}});
+        const ops=members.map(async (ele)=>{
+            await User.updateOne({_id: ele}, {$push: {groups: newGroup._id}});
         })
+        await Promise.all(ops)
         res.status(201).json(newGroup)
     } catch (error) {
         console.log("Error in createGroup controller: ",error)

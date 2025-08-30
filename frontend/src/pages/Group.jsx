@@ -9,11 +9,13 @@ import { useEffect, useState } from "react";
 import { CgArrowsExchange } from "react-icons/cg";
 import { useAuthStore } from "../store/useAuthStore";
 import { GroupSettleUp } from "../components/UI/GroupSettleUp";
+import { useGroupStore } from "../store/useGroupStore";
 
 export const Group=()=>{
 
     const {authUser}=useAuthStore()
-    const {user,isSearchingUser,getGroup,getGroupExpense,expense,getGroupTransaction,groupTransaction,isFetchingExpense,isFetchingTransaction}=useExpenseStore()
+    const {getGroupExpense,expense,getGroupTransaction,groupTransaction,isFetchingExpense,isFetchingTransaction}=useExpenseStore()
+    const {group,getGroup,isSearchingGroup}=useGroupStore()
     const {id}=useParams()
     const [balance,setBalance]=useState(0)
     const [showSettle,setShowSettle]=useState(false)
@@ -47,14 +49,13 @@ export const Group=()=>{
         }
     },[groupTransaction,isFetchingTransaction])
 
-    if(isSearchingUser || !user?.groupName){
+    if(isSearchingGroup || !group?.groupName){
         return (
             <main className="w-full min-h-screen bg-[#0d0f1c] pt-16 text-white">
                 <p>Loading...</p>
             </main>
         )
     }
-    console.log(groupTransaction)
 
 
     return (
@@ -70,8 +71,8 @@ export const Group=()=>{
                                 <RiGroupLine className="text-7xl bg-[#ffffff30] p-2 rounded-[50%]"/>
                             </div>
                             <div>
-                                <p className="text-lg">{user?.groupName}</p>
-                                <p className="text-[#ffffff60]">{user?.members?.length} members</p>
+                                <p className="text-lg">{group?.groupName}</p>
+                                <p className="text-[#ffffff60]">{group?.members?.length} members</p>
                             </div>
                         </div>
                         <div>
@@ -129,7 +130,7 @@ export const Group=()=>{
                             <h1 className="text-2xl font-bold"><u>Members</u></h1>
                             <div className="flex flex-col gap-1">
                                 {
-                                    user?.members.map((m,idx)=>{
+                                    group?.members.map((m,idx)=>{
                                         return (
                                             <div key={idx} className="flex gap-2 items-center">
                                                 <FaUserGraduate/>
@@ -169,7 +170,7 @@ export const Group=()=>{
                     </div>
                 </div>
             </main>
-            <GroupSettleUp showSettle={showSettle} setShowSettle={setShowSettle} user={user}/>
+            {/* <GroupSettleUp showSettle={showSettle} setShowSettle={setShowSettle} group={group}/> */}
         </>
     )
 }

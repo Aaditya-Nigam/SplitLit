@@ -230,7 +230,8 @@ const getExpense=async (req,res)=>{
             $or: [{paidBy: userId, paidTo: secondUser, isGroupExpense: false},
                 {paidBy: secondUser, paidTo: userId, isGroupExpense: false}
             ]
-        })
+        }).populate({path: 'paidBy'})
+        .populate({path: 'paidTo'})
         res.status(201).json(expense);
         return ;
         

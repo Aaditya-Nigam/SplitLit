@@ -8,7 +8,7 @@ import { AddExpense } from "../components/UI/AddExpense";
 import { useEffect, useState } from "react";
 import { useExpenseStore } from "../store/useExpenseStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { CreateGroup } from "../components/UI/CreateGroup";
+import { CreateGroup } from "./CreateGroup";
 import { useGroupStore } from "../store/useGroupStore";
 
 export const Dashboard=()=>{
@@ -19,12 +19,10 @@ export const Dashboard=()=>{
     const [owed,setOwed]=useState(0);
 
     const {authUser}=useAuthStore()
-    const {groups,getAllGroups}=useGroupStore();
     const {transaction,getAllTransaction}=useExpenseStore();
     
     useEffect(()=>{
-        getAllTransaction();
-        getAllGroups();      
+        getAllTransaction();  
     },[])
 
     const navigate=useNavigate()
@@ -40,9 +38,9 @@ export const Dashboard=()=>{
         let owed=0;
         transaction?.map((t)=>{
             if(t.member1==authUser?.userName){
-                owe=Number(owe)+t.amount;
+                owed=Number(owed)+t.amount;
             }else{
-                owed=Number(owed)+t.amount
+                owe=Number(owe)+t.amount
             }
         })
         setOwe(owe)
@@ -117,12 +115,12 @@ export const Dashboard=()=>{
                                                 {
                                                     transaction?.map((ele,idx)=>{
                                                         {
-                                                            return ele.member1==authUser?.userName && ele.amount>0? 
-                                                            <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.groupId}`:`/person/${ele.member1}`} className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
+                                                            return ele.member1._id==authUser?._id && ele.amount>0? 
+                                                            <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.groupId._id}`:`/person/${ele.member2._id}`}  className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
                                                                 <div>
-                                                                    <p>{ele.member2}</p>
+                                                                    <p>{ele.member2.userName}</p>
                                                                     {
-                                                                        ele.isGroupTransaction?<p className="text-xs text-[#ffffff90]">{ele.groupName}</p>:""
+                                                                        ele.isGroupTransaction?<p className="text-xs text-[#ffffff90]">{ele.groupId.groupName}</p>:""
                                                                     }
                                                                 </div>
                                                                 <p className="text-green-400 font-bold">₹ {ele.amount}</p>
@@ -141,12 +139,12 @@ export const Dashboard=()=>{
                                                 {
                                                     transaction?.map((ele,idx)=>{
                                                         {
-                                                            return ele.member2==authUser?.userName && ele.amount>0? 
-                                                            <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.member1}`:`/person/${ele.member1}`} className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
+                                                            return ele.member2._id==authUser?._id && ele.amount>0? 
+                                                            <NavLink key={idx} to={ele.isGroupTransaction==true?`/group/${ele.groupId._id}`:`/person/${ele.member1._id}`} className="flex justify-between items-center hover:bg-[#ffffff30] px-2 py-1 rounded">
                                                                 <div>
-                                                                    <p>{ele.member1}</p>
+                                                                    <p>{ele.member1.userName}</p>
                                                                     {
-                                                                        ele.isGroupTransaction?<p className="text-xs text-[#ffffff90]">{ele.groupName}</p>:""
+                                                                        ele.isGroupTransaction?<p className="text-xs text-[#ffffff90]">{ele.groupId.groupName}</p>:""
                                                                     }
                                                                 </div>
                                                                 <p className="text-rose-400 font-bold">₹ {ele.amount}</p>
@@ -163,15 +161,15 @@ export const Dashboard=()=>{
                                         <p className="">Your Groups</p>
                                         <NavLink to="/contact" className="flex gap-2 items-center text-sm hover:text-[#E0E0E0]"><p className="hover:underline">View all</p> <MdKeyboardArrowRight className="text-lg"/></NavLink>
                                     </div>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 max-h-[250px] overflow-auto scrollbar-custom">
                                         {
-                                            groups?.map((group,idx)=>{
+                                            authUser.groups?.map((group,idx)=>{
                                                 return (
                                                     <NavLink key={idx} to={`/group/${group._id}`} className="flex gap-3 items-center">
                                                         <RiGroupLine className="text-4xl bg-[#ffffff40] text-white p-1 rounded-lg"/>
                                                         <div className="">
                                                             <p>{group.groupName}</p>
-                                                            <p className="text-[#ffffff70] text-xs">{group.members.length} Members</p>
+                                                            <p className="text-[#ffffff70] text-xs">{group.members?.length} Members</p>
                                                         </div>
                                                     </NavLink>
                                                 )
@@ -179,7 +177,7 @@ export const Dashboard=()=>{
                                         }
                                         
                                     </div>
-                                    <button className="flex gap-4 items-center justify-center text-lg rounded-lg py-1 bg-sky-500 hover:bg-sky-600 cursor-pointer" onClick={()=> setShowCreateGroup(true)}><RiGroupLine />Create Group</button>
+                                    <NavLink to={"createGroup/"} className="flex gap-4 items-center justify-center text-lg rounded-lg py-1 bg-sky-500 hover:bg-sky-600 cursor-pointer"><RiGroupLine />Create Group</NavLink>
                                 </div>
                             </div>
                         </div>
@@ -187,7 +185,6 @@ export const Dashboard=()=>{
                 </div>
             </main>
             <AddExpense showAddExpense={showAddExpense} setShowAddExpense={setShowAddExpense}/>
-            <CreateGroup showCreateGroup={showCreateGroup} setShowCreateGroup={setShowCreateGroup}/>
         </>
     )
 }

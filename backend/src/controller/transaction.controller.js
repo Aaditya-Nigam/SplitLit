@@ -8,7 +8,9 @@ const getAllTransaction=async (req,res)=>{
                 {member1: userId},
                 {member2: userId}
             ]
-        })
+        }).populate({path: 'groupId'})
+        .populate({path: 'member1'})
+        .populate({path: 'member2'})
         res.status(201).json(transactions);
     } catch (error) {
         console.log("Error in getAllTransaction controller: ",error.message);

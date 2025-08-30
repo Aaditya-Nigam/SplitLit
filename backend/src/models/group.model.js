@@ -10,9 +10,8 @@ const groupSchema=mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }],
-    groupId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group',
+    groupName: {
+        type: String,
         required: true
     },
     description: {
