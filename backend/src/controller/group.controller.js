@@ -3,8 +3,8 @@ const Group=require("../models/group.model")
 
 const getAllGroups=async (req,res)=>{
     try {
-        const userName=req.user.userName
-        const group=await Group.find({members: userName});
+        const userId=req.user._id
+        const group=await Group.find({members: userId});
         res.status(201).json(group);
     } catch (error) {
         console.log("Error in getAllGroups controller: ",error.message);
@@ -14,7 +14,7 @@ const getAllGroups=async (req,res)=>{
 
 const getGroup=async (req,res)=>{
     try {
-        const {groupId}=req.body;
+        const {groupId}=req.params;
         if(!groupId){
             res.status(401).json({message: "Fields are missing!"})
             return ;
@@ -46,9 +46,10 @@ const createGroup=async (req,res)=>{
             members
         })
         await newGroup.save();
-        members.map(async (ele)=>{
-            await User.updateOne({userName: ele}, {$push: {groups: newGroup._id}});
+        const ops=members.map(async (ele)=>{
+            await User.updateOne({_id: ele}, {$push: {groups: newGroup._id}});
         })
+        await Promise.all(ops)
         res.status(201).json(newGroup)
     } catch (error) {
         console.log("Error in createGroup controller: ",error)
@@ -58,7 +59,7 @@ const createGroup=async (req,res)=>{
 
 const deleteGroup=async (req,res)=>{
     try {
-        const {groupId}=req.body;
+        const {groupId}=req.params;
         if(!groupId){
             res.status(401).json({message: "Fields are missing!"});
             return ;

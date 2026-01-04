@@ -11,9 +11,9 @@ router.post('/createGroupSettlement', protectedRoute, createGroupSettlement)
 
 router.post('/createGroupExpense', protectedRoute, createGroupExpense)
 
-router.post('/getExpense', protectedRoute, getExpense)
+router.get('/getExpense/:secondUser', protectedRoute, getExpense)
 
-router.post('/getGroupExpense', protectedRoute, getGroupExpense)
+router.get('/getGroupExpense/:groupId', protectedRoute, getGroupExpense)
 
 router.post('/updateExpense', protectedRoute, updateExpense)
 

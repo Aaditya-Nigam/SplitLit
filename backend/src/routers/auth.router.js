@@ -13,6 +13,6 @@ router.get("/check", protectedRoute, authCheck)
 
 router.post("/addParticipant", protectedRoute, addParticipant)
 
-router.post("/getUser", protectedRoute, getUser)
+router.get("/getUser/:id", protectedRoute, getUser)
 
 module.exports=router

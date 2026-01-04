@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useAuthStore } from "../../store/useAuthStore"
+import { useAuthStore } from "../store/useAuthStore"
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import toast, { Toaster } from "react-hot-toast";
-import { useGroupStore } from "../../store/useGroupStore";
+import { useGroupStore } from "../store/useGroupStore";
+import { NavLink, useNavigate } from "react-router-dom";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
-export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
+export const CreateGroup=()=>{
 
     const {authUser}=useAuthStore()
     const {createGroup}=useGroupStore()
@@ -14,9 +16,10 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
     const [groupData,setGroupData]=useState({
         groupName: "",
         description: "",
-        members: [authUser?.userName]
+        members: [authUser]
     })
-    const {addParticipant}=useAuthStore()
+    const [groupMembers, setGroupMembers]=useState([authUser.userName])
+    const {addParticipant,isAdding}=useAuthStore()
 
     const handleAddMember=async (e)=>{
         e.preventDefault();
@@ -25,9 +28,10 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
             return ;
         }
         const add=await addParticipant({userName: member})
-        if(add!=""){
-            if(!groupData.members.includes(add.name)){
-                setGroupData({...groupData, members: [...groupData.members,add.name]});
+        if(add && add.userName){
+            if(!groupMembers.includes(add.userName)){
+                setGroupData({...groupData, members: [...groupData.members,add]});
+                setGroupMembers([...groupMembers, add.userName])
             }
             setMember("");
             setShowAdd(false)
@@ -39,6 +43,7 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
         e.preventDefault();
         setShowAdd(true)
     }
+    console.log(groupData)
 
     const checkForm=()=>{
         if(groupData.groupName.trim().length==0){
@@ -61,18 +66,19 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
                 setGroupData({
                     groupName: "",
                     description: "",
-                    members: [authUser.userName]
+                    members: [authUser]
                 })
-                setShowCreateGroup(false)
+                setGroupMembers([authUser.userName]);
             }
         }
     }
 
     return (
         <>
-            <div className={`w-full h-full bg-[#00000099] backdrop-blur fixed top-0 text-white flex justify-center items-center ${showCreateGroup?'':'hidden'}`} onClick={()=> setShowCreateGroup(false)}> 
-                <div className="w-[600px] rounded py-4 px-8 bg-[#0d0f1c] border border-[#ffffff10] text-white" onClick={(e)=> e.stopPropagation()}>
-                    <div className="pb-8">
+            <div className={`w-full h-full bg-[#0d0f1c] backdrop-blur fixed top-0 text-white flex justify-center items-center`}> 
+                <div className="w-[600px] rounded py-4 px-8 bg-[#ffffff10] border border-[#ffffff10] text-white">
+                    <div className="pb-8 flex items-center justify-center relative">
+                        <NavLink to={"/dashboard"} className="absolute left-0 cursor-pointer"><FaArrowLeftLong className="text-2xl"/></NavLink>
                         <p className="text-center text-3xl">Create Group</p>
                     </div>
                     <form className="flex flex-col gap-6" onSubmit={handleCreateGroup}>
@@ -89,7 +95,7 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
                             <div className="flex gap-4 flex-wrap">
                                 {
                                     groupData.members.map((ele,idx)=>{
-                                        return <p key={idx} className="bg-[#ffffff20] px-4 rounded py-0.5">{ele}</p>
+                                        return <p key={idx} className="bg-[#ffffff20] px-4 rounded py-0.5">{ele?.userName}</p>
                                     })
                                 }
                                 <div className="relative">
@@ -97,7 +103,7 @@ export const CreateGroup=({showCreateGroup,setShowCreateGroup})=>{
                                     <div className={`bg-white w-[350px] p-4 absolute mt-1 left-5 rounded flex gap-2 pt-6 ${showAdd?'':'hidden'}`}>
                                         <RxCross2 className="text-black absolute top-1 right-2 cursor-pointer" onClick={()=> setShowAdd(false)}/>
                                         <input type="text" name="addMember" id="addMember" placeholder="Aaditya_Nigam" value={member} onChange={(e)=> setMember(e.target.value)} className="text-black px-1 border-2 border-black rounded-lg w-full"/>
-                                        <button className="text-black bg-gray-400 px-2 rounded-lg cursor-pointer hover:bg-gray-700 hover:text-white" onClick={handleAddMember}>Add</button>
+                                        <button className="text-black bg-gray-400 px-2 rounded-lg cursor-pointer hover:bg-gray-700 hover:text-white" onClick={handleAddMember} disabled={isAdding}>Add</button>
                                     </div>
                                 </div>
 

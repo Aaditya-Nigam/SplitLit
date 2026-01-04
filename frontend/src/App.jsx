@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { Contact } from "./pages/Contact";
 import { Person } from "./pages/Person";
 import { Group } from "./pages/Group";
+import { CreateGroup } from "./pages/CreateGroup";
 
 const App=()=>{
 
@@ -46,6 +47,10 @@ const App=()=>{
         {
           path: "/dashboard",
           element: <Dashboard/>
+        },
+        {
+          path: "/dashboard/createGroup",
+          element: <CreateGroup/>
         },
         {
           path: "/person/:id",

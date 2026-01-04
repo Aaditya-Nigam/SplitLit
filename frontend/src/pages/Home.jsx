@@ -19,7 +19,7 @@ export const Home=()=>{
             <div className="w-[80%] mx-auto flex flex-col items-center p-8">
                 <div>
                     <p className="text-sm bg-white px-12 py-0.5 rounded-xl text-green-700 font-semibold">Split smart. Live lit.</p>
-                    <p className="text-center text-xs py-1 text-[#ffffff80]">Version 1.0</p>
+                    <p className="text-center text-xs py-1 text-[#ffffff80]">Version 2.0.0</p>
                 </div>
                 <div className="py-8">
                     <p className="text-8xl leading-[110px] text-center text-green-70">Say goodbye to mental maths & messy payloads.</p>

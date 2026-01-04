@@ -13,7 +13,7 @@ const protectedRoute=async (req,res,next)=>{
             res.status(401).json({message: "Invalid token!!"});
             return ;
         }
-        const user=await User.findById(verify.userId).select('-password');
+        const user=await User.findById(verify.userId).select('-password').populate({path: 'groups'})
         if(!user){
             res.status(401).json({message: "Invalid token!"});
             return ;

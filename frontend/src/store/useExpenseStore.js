@@ -96,7 +96,7 @@ export const useExpenseStore=create((set,get)=>({
     getUser: async (formData)=>{
         set({isSearchingUser: true})
         try {
-            const res=await axiosInstance.post("/auth/getUser",formData)
+            const res=await axiosInstance.get(`/auth/getUser/${formData.id}`)
             const data=res.data;
             set({user: data});
         } catch (error) {
@@ -107,27 +107,12 @@ export const useExpenseStore=create((set,get)=>({
         }
     },
 
-    getGroup: async (formData)=>{
-        set({isSearchingUser: true})
-        try {
-            const res=await axiosInstance.post("/group/getGroup",formData)
-            const data=res.data;
-            set({user: data});
-        } catch (error) {
-            console.log("Error in getGroup useExpenseStore: ",error)
-            toast.error(error.response.data.message)
-        }finally{
-            set({isSearchingUser: false});
-        }
-    },
-
     getExpense: async (formData)=>{
         set({isFetchingExpense: true})
         try {
-            const res=await axiosInstance.post("/expense/getExpense", formData)
+            const res=await axiosInstance.get(`/expense/getExpense/${formData.id}`)
             const data=res.data;
             set({expense: data})
-            console.log(data);
         } catch (error) {
             console.log("Error in getExpense useExpenseStore: ",error)
             toast.error(error.response.data.message)
@@ -138,7 +123,7 @@ export const useExpenseStore=create((set,get)=>({
 
     getGroupExpense: async (formData)=>{
         try {
-            const res=await axiosInstance.post("/expense/getGroupExpense", formData)
+            const res=await axiosInstance.get(`/expense/getGroupExpense/${formData.groupId}`)
             const data=res.data;
             set({expense: data})
         } catch (error) {
@@ -149,7 +134,7 @@ export const useExpenseStore=create((set,get)=>({
 
     getBalance: async (formData)=>{
         try {
-            const res=await axiosInstance.post("/transaction/getTransaction", formData)
+            const res=await axiosInstance.get(`/transaction/getTransaction/${formData.id}`)
             const data=res.data
             set({balance: data})
         } catch (error) {
@@ -161,7 +146,7 @@ export const useExpenseStore=create((set,get)=>({
     getGroupTransaction: async (formData)=>{
         set({isFetchingTransaction: true})
         try {
-            const res=await axiosInstance.post("/transaction/getGroupTransaction", formData)
+            const res=await axiosInstance.get(`/transaction/getGroupTransaction/${formData.groupId}`)
             const data=res.data
             set({groupTransaction: data})
         } catch (error) {
