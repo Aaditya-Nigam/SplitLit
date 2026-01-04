@@ -7,7 +7,7 @@ router.get("/getAllGroups", protectedRoute, getAllGroups)
 
 router.post('/createGroup', protectedRoute, createGroup)
 
-router.delete('/deleteGroup', protectedRoute, deleteGroup)
+router.delete('/deleteGroup/:groupId', protectedRoute, deleteGroup)
 
 router.get("/getGroup/:groupId", protectedRoute, getGroup)
 

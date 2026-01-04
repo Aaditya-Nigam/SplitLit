@@ -1,54 +1,82 @@
 const Expense = require("../models/expense.model");
 const Transaction=require("../models/transaction.model")
-const Group=require("../models/group.model")
+const Group=require("../models/group.model");
+const User = require("../models/auth.model");
 
-const createExpense=async (req,res)=>{
-    try {
-        let {title,amount,paidBy,paidTo,category}=req.body;
-        if(!title || !amount || !paidBy || !paidTo || !category){
-            res.status(401).json({message: "Fields are missing!!"});
-            return ;
-        }
-        const share=(amount/2).toFixed(2);
-        const newExpense=new Expense({
-            title,
-            amount: amount,
-            paidBy,
-            paidTo,
-            category
-        })
-        await newExpense.save();
-        let transaction=await Transaction.findOne({isGroupTransaction: false, member1: paidBy, member2: paidTo});
-        if(!transaction){
-            transaction=await Transaction.findOne({isGroupTransaction: false, member1: paidTo, member2: paidBy})
-        }
-        if(!transaction){
-            const newTransaction=new Transaction({
-                member1: paidBy,
-                member2: paidTo,
-                amount: share
-            })
-            await newTransaction.save();
-        }else{
-            if(transaction.member1==paidBy){
-                const sum=Number(transaction.amount)+Number(share);
-                await Transaction.findByIdAndUpdate(transaction._id, {amount: sum});
-            }else{
-                if(Number(transaction.amount)>=Number(share)){
-                    const sum=Number(transaction.amount)-Number(share);
-                    await Transaction.findByIdAndUpdate(transaction._id, {amount: sum});
-                }else{
-                    const sum=Number(share)-Number(transaction.amount);
-                    await Transaction.findByIdAndUpdate(transaction._id, {amount: sum, member1: transaction.member2, member2: transaction.member1});
-                }
-            }
-        }
-        res.status(201).json(newExpense);
-    } catch (error) {
-        console.log("Error in create expense controller: ",error);
-        res.status(401).json({message: "Internal server error!"});
+const createExpense = async (req, res) => {
+  try {
+    let { title, amount, paidBy, paidTo, category } = req.body;
+    if (!title || !amount || !paidBy || !paidTo || !category) {
+      return res.status(401).json({ message: "Fields are missing!!" });
     }
-}
+
+    // 🔹 Find users in DB by username (or email, depending on your schema)
+    const paidByUser = await User.findOne({ username: paidBy });
+    const paidToUser = await User.findOne({ username: paidTo });
+
+    if (!paidByUser || !paidToUser) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    const share = (amount / 2).toFixed(2);
+
+    const newExpense = new Expense({
+      title,
+      amount,
+      paidBy: paidByUser._id,   // use ObjectId
+      paidTo: paidToUser._id,   // use ObjectId
+      category
+    });
+
+    await newExpense.save();
+
+    let transaction = await Transaction.findOne({
+      isGroupTransaction: false,
+      member1: paidByUser._id,
+      member2: paidToUser._id
+    });
+
+    if (!transaction) {
+      transaction = await Transaction.findOne({
+        isGroupTransaction: false,
+        member1: paidToUser._id,
+        member2: paidByUser._id
+      });
+    }
+
+    if (!transaction) {
+      const newTransaction = new Transaction({
+        member1: paidByUser._id,
+        member2: paidToUser._id,
+        amount: share
+      });
+      await newTransaction.save();
+    } else {
+      if (transaction.member1.toString() === paidByUser._id.toString()) {
+        const sum = Number(transaction.amount) + Number(share);
+        await Transaction.findByIdAndUpdate(transaction._id, { amount: sum });
+      } else {
+        if (Number(transaction.amount) >= Number(share)) {
+          const sum = Number(transaction.amount) - Number(share);
+          await Transaction.findByIdAndUpdate(transaction._id, { amount: sum });
+        } else {
+          const sum = Number(share) - Number(transaction.amount);
+          await Transaction.findByIdAndUpdate(transaction._id, {
+            amount: sum,
+            member1: transaction.member2,
+            member2: transaction.member1
+          });
+        }
+      }
+    }
+
+    res.status(201).json(newExpense);
+  } catch (error) {
+    console.log("Error in create expense controller: ", error);
+    res.status(500).json({ message: "Internal server error!" });
+  }
+};
+
 
 const createSettlement=async (req,res)=>{
     try {

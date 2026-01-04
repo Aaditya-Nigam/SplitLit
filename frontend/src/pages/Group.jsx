@@ -130,7 +130,7 @@ export const Group=()=>{
                             <h1 className="text-2xl font-bold"><u>Members</u></h1>
                             <div className="flex flex-col gap-1">
                                 {
-                                    group?.members.map((m,idx)=>{
+                                    group?.members?.map((m,idx)=>{
                                         return (
                                             <div key={idx} className="flex gap-2 items-center">
                                                 <FaUserGraduate/>

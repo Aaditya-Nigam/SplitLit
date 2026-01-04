@@ -48,7 +48,6 @@ export const useGroupStore=create((set,get)=>({
             set({isCreatingGroup: false})
             // const groups=get().groups;
             const authUser = useAuthStore.getState().authUser;
-
             useAuthStore.setState({
             authUser: {
                 ...authUser,
@@ -62,6 +61,21 @@ export const useGroupStore=create((set,get)=>({
             toast.error(error.response.data.message)
             set({isCreatingGroup: false})
             return false
+        }
+    },
+
+    deleteGroup: async(groupId)=>{
+        try {
+            const res=await axiosInstance.delete(`/group/deleteGroup/${groupId}`);
+            const authUser=useAuthStore.getState().authUser;
+            const updatedGroups=authUser.groups.filter((group)=>{
+                return group._id!=groupId
+            })
+            useAuthStore.setState({authUser: {...authUser, groups: updatedGroups}})
+            toast.success("Successfully deleted!")
+        } catch (error) {
+            console.log("Error in deleteGroup useGroupStore: ",error)
+            toast.error(error.response.data.message)
         }
     }
 }))

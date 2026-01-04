@@ -10,6 +10,7 @@ import { useExpenseStore } from "../store/useExpenseStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { CreateGroup } from "./CreateGroup";
 import { useGroupStore } from "../store/useGroupStore";
+import { MdDeleteOutline } from "react-icons/md";
 
 export const Dashboard=()=>{
 
@@ -20,6 +21,7 @@ export const Dashboard=()=>{
 
     const {authUser}=useAuthStore()
     const {transaction,getAllTransaction}=useExpenseStore();
+    const {deleteGroup}=useGroupStore()
     
     useEffect(()=>{
         getAllTransaction();  
@@ -165,13 +167,16 @@ export const Dashboard=()=>{
                                         {
                                             authUser.groups?.map((group,idx)=>{
                                                 return (
-                                                    <NavLink key={idx} to={`/group/${group._id}`} className="flex gap-3 items-center">
-                                                        <RiGroupLine className="text-4xl bg-[#ffffff40] text-white p-1 rounded-lg"/>
-                                                        <div className="">
-                                                            <p>{group.groupName}</p>
-                                                            <p className="text-[#ffffff70] text-xs">{group.members?.length} Members</p>
+                                                    <div key={idx} className="flex items-center justify-between px-2">
+                                                        <div className="flex gap-3 items-center">
+                                                            <RiGroupLine className="text-4xl bg-[#ffffff40] text-white p-1 rounded-lg"/>
+                                                            <NavLink to={`/group/${group._id}`} className="">
+                                                                <p>{group.groupName}</p>
+                                                                <p className="text-[#ffffff70] text-xs">{group.members?.length} Members</p>
+                                                            </NavLink>
                                                         </div>
-                                                    </NavLink>
+                                                        <MdDeleteOutline className="text-xl cursor-pointer" onClick={()=> deleteGroup(group._id)}/>
+                                                    </div>
                                                 )
                                             })
                                         }

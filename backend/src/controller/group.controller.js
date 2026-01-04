@@ -59,7 +59,7 @@ const createGroup=async (req,res)=>{
 
 const deleteGroup=async (req,res)=>{
     try {
-        const {groupId}=req.body;
+        const {groupId}=req.params;
         if(!groupId){
             res.status(401).json({message: "Fields are missing!"});
             return ;
